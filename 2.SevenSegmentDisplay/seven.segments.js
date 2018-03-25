@@ -1,5 +1,5 @@
 const five = require("johnny-five");
-const SevenSegmentDisplay = require("./7SegDisplay");
+const SevenSegmentDisplay = require("./SevenSegmentDisplay");
 
 const board = new five.Board();
 /*
