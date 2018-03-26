@@ -1,5 +1,5 @@
 const five = require("johnny-five");
-const SevenSegmentDisplayDigits = require("./SevenSegmentDisplayDigits");
+const SevenSegmentDisplayDigits = require("../3.SevenSegmentDisplayBy4/SevenSegmentDisplayDigits");
 
 const board = new five.Board();
 
@@ -27,22 +27,33 @@ board.on("ready", function () {
         control
     });
 
-    let counter = 0;
-    let goUp = true;
+    const that = this;
+    const WAIT = 15;
+
+    let count = 0;
     let step = 1;
-
+    let goUp = true;
     setInterval(function () {
-        display.drawToAll(counter);
-
-        if (goUp && counter === 9) {
-            goUp = !goUp;
-            step = -1
-        } else if (!goUp && counter === 0) {
-            goUp = !goUp;
+        if (goUp && count === 0) {
             step = 1;
+            goUp = false;
+        } else if (!goUp && count === 99) {
+            step = -1;
+            goUp = true;
         }
-        counter += step;
 
-    }, 500);
+        count += step;
+
+    }, 250);
+
+    that.loop(30, function () {
+        display.draw(count % 10, 2);
+        that.wait(WAIT, function () {
+            display.draw(Math.floor(count / 10), 3);
+
+        })
+
+    })
+
 });
 

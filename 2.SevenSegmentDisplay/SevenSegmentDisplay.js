@@ -1,6 +1,9 @@
 function SevenSegmentDisplay(options) {
     const { pins, type } = options;
-    this.pins = pins;
+    this.pins = pins.map(pin => ({
+        status: false,
+        pin
+    }));
     this.type = type || this._types[this._defaultType];
     this.clear();
 }
@@ -48,15 +51,31 @@ SevenSegmentDisplay.prototype.printNumber = function (number) {
     this.printToScreen(this._numbers[number]);
 };
 SevenSegmentDisplay.prototype.printToScreen = function(data) {
-    this.clear(this.pins);
+    const segmentsToClear = this._segments.filter(segment => !data.includes(segment));
+    this._clearSegments(segmentsToClear);
     data.forEach(segment => {
-        this._getPinForSegment(segment)[this._typeAction[this.type].on]();
+        const currentPin = this._getPinForSegment(segment);
+
+        if (!currentPin.status) {
+            currentPin.pin[this._typeAction[this.type].on]();
+            currentPin.status = true;
+        }
     })
 };
+SevenSegmentDisplay.prototype._clearSegments = function(segments) {
+    segments.forEach(segment => {
+        const currentPin = this._getPinForSegment(segment);
+
+        if (currentPin.status) {
+            currentPin.pin[this._typeAction[this.type].off]();
+            currentPin.status = false;
+        }
+    })
+};
+
 SevenSegmentDisplay.prototype.clear = function() {
-    this._segments.forEach(segment => {
-        this._getPinForSegment(segment)[this._typeAction[this.type].off]();
-    })};
+    this._clearSegments(this._segments);
+};
 SevenSegmentDisplay.prototype._getPinForSegment = function(segment) {
     const index = this._segments.indexOf(segment);
     if (index === -1) {
