@@ -28,7 +28,7 @@ board.on("ready", function () {
     });
 
     const that = this;
-    const WAIT = 15;
+    const WAIT = 10;
 
     let count = 0;
     let step = 1;
@@ -44,9 +44,9 @@ board.on("ready", function () {
 
         count += step;
 
-    }, 250);
+    }, 1000);
 
-    that.loop(30, function () {
+    that.loop(50, function () {
         display.draw(count % 10, 2);
         that.wait(WAIT, function () {
             display.draw(Math.floor(count / 10), 3);
